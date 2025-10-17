@@ -1,0 +1,27 @@
+{
+  "name": "minecraft-server-docker",
+  "version": "1.0.0",
+  "description": "Minecraft Server running in Docker container with management scripts",
+  "main": "index.js",
+  "scripts": {
+    "build": "./scripts/manage-server.sh build",
+    "start": "./scripts/manage-server.sh start",
+    "stop": "./scripts/manage-server.sh stop",
+    "restart": "./scripts/manage-server.sh restart",
+    "status": "./scripts/manage-server.sh status",
+    "logs": "./scripts/manage-server.sh logs",
+    "console": "./scripts/manage-server.sh console",
+    "backup": "./scripts/manage-server.sh backup",
+    "help": "./scripts/manage-server.sh help"
+  },
+  "keywords": [
+    "minecraft",
+    "docker",
+    "server",
+    "gaming"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}

@@ -1,0 +1,50 @@
+# Use OpenJDK 21 as the base image for Minecraft 1.20.1+
+FROM openjdk:21-jre-slim
+
+# Set the working directory
+WORKDIR /minecraft
+
+# Create a minecraft user to run the server (security best practice)
+RUN groupadd -r minecraft && useradd -r -g minecraft minecraft
+
+# Install necessary packages
+RUN apt-get update && \
+    apt-get install -y wget curl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Minecraft and Forge versions - can be overridden via build args
+ARG MC_VERSION=1.20.1
+ARG FORGE_VERSION=47.3.0
+ENV MC_VERSION=${MC_VERSION}
+ENV FORGE_VERSION=${FORGE_VERSION}
+ENV SERVER_JAR=forge-${MC_VERSION}-${FORGE_VERSION}.jar
+ENV MEMORY_SIZE=4G
+
+# Download and install Forge server
+RUN echo "Downloading Forge ${FORGE_VERSION} for Minecraft ${MC_VERSION}..." && \
+    wget -O forge-installer.jar \
+    "https://maven.minecraftforge.net/net/minecraftforge/forge/${MC_VERSION}-${FORGE_VERSION}/forge-${MC_VERSION}-${FORGE_VERSION}-installer.jar" && \
+    echo "Installing Forge server..." && \
+    java -jar forge-installer.jar --installServer && \
+    rm forge-installer.jar && \
+    echo "Forge installation completed"
+
+# Create necessary directories
+RUN mkdir -p /minecraft/mods /minecraft/config /minecraft/data /minecraft/logs
+
+# Copy server configuration files
+COPY server.properties /minecraft/
+COPY eula.txt /minecraft/
+
+# Set ownership to minecraft user
+RUN chown -R minecraft:minecraft /minecraft
+
+# Switch to minecraft user
+USER minecraft
+
+# Expose the default Minecraft port
+EXPOSE 25565
+
+# Set the default command
+CMD ["sh", "-c", "echo 'Starting Forge server...' && java -Xmx${MEMORY_SIZE} -Xms${MEMORY_SIZE} -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -jar ${SERVER_JAR} --nogui"]

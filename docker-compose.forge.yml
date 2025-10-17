@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  minecraft-forge-server:
+    build: 
+      context: .
+      dockerfile: Dockerfile.forge
+      args:
+        MC_VERSION: 1.20.1
+        FORGE_VERSION: 47.3.0
+    container_name: minecraft-forge-server
+    ports:
+      - "25565:25565"
+    environment:
+      - MEMORY_SIZE=4G
+      - MC_VERSION=1.20.1
+      - FORGE_VERSION=47.3.0
+    volumes:
+      - ./data:/minecraft/data
+      - ./logs:/minecraft/logs
+      - ./mods:/minecraft/mods                    # Mods directory
+      - ./config:/minecraft/config                # Mod configurations
+      - ./server.properties:/minecraft/server.properties
+      - ./whitelist.json:/minecraft/whitelist.json
+      - ./ops.json:/minecraft/ops.json
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    networks:
+      - minecraft-network
+    # Resource limits for modded server
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+        reservations:
+          memory: 4G
+
+networks:
+  minecraft-network:
+    driver: bridge

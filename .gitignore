@@ -1,0 +1,34 @@
+# Docker and build files
+.dockerignore
+target/
+build/
+
+# Minecraft server files (these will be generated)
+world/
+world_nether/
+world_the_end/
+*.log
+banned-ips.json
+banned-players.json
+usercache.json
+usernamecache.json
+server.jar
+
+# Backup files
+backups/
+*.tar.gz
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+tmp/
+temp/

@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  minecraft-server:
+    build: .
+    container_name: minecraft-server
+    ports:
+      - "25565:25565"
+    environment:
+      - MEMORY_SIZE=2G
+      - MINECRAFT_VERSION=1.21.1
+    volumes:
+      - ./data:/minecraft/data
+      - ./logs:/minecraft/logs
+      - ./server.properties:/minecraft/server.properties
+      - ./whitelist.json:/minecraft/whitelist.json
+      - ./ops.json:/minecraft/ops.json
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    networks:
+      - minecraft-network
+
+networks:
+  minecraft-network:
+    driver: bridge
