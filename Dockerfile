@@ -1,5 +1,5 @@
 # Use OpenJDK 21 as the base image for Minecraft 1.21+
-FROM openjdk:21-jre-slim
+FROM openjdk:21-jdk-slim
 
 # Set the working directory
 WORKDIR /minecraft
@@ -15,8 +15,8 @@ RUN apt-get update && \
 
 # Set server properties
 ENV SERVER_JAR=server.jar
-ENV MEMORY_SIZE=2G
-ENV MINECRAFT_VERSION=1.21.1
+ENV MEMORY_SIZE=4G
+ENV MINECRAFT_VERSION=1.21.10
 
 # Download Minecraft server jar
 RUN wget -O ${SERVER_JAR} https://piston-data.mojang.com/v1/objects/59353fb40c36d304f2035d51e7d6e6baa98dc05c/server.jar
